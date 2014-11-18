@@ -1,0 +1,23 @@
+{
+  "uuid": "863faa63-4765-48e7-999e-fc6468c70c25",
+  "shortName": "localize",
+  "longName": "localize",
+  "companyName": "MakeAwesomeHappen",
+  "versionCode": 1,
+  "versionLabel": "1.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": [
+    {
+      "type": "raw",
+      "name": "LOCALE",
+      "file": "locale.bin"
+    }
+    ]
+  }
+}
