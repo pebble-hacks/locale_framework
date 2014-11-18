@@ -2,32 +2,30 @@
   
 DictionaryIterator s_locale_dict;
 
-//Fallback to English for unlocalized languages
-#ifndef RESOURCE_ID_LOCALE_FRENCH
-  #define RESOURCE_ID_LOCALE_FRENCH RESOURCE_ID_LOCALE_ENGLISH
-#endif
-#ifndef RESOURCE_ID_LOCALE_GERMAN
-  #define RESOURCE_ID_LOCALE_GERMAN RESOURCE_ID_LOCALE_ENGLISH
-#endif
-#ifndef RESOURCE_ID_LOCALE_SPANISH
-  #define RESOURCE_ID_LOCALE_SPANISH RESOURCE_ID_LOCALE_ENGLISH
-#endif
 
 void locale_init(void) {
-  const char* locale_str = i18n_get_locale();
+  //const char* locale_str = i18n_get_locale();
+  const char* locale_str = "es"; //hard-coded for testing 
   ResHandle locale_handle = NULL;
+  int locale_size = 0;
 
   if (strncmp(locale_str, "fr", 2) == 0) {
     locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_FRENCH);
+    locale_size = resource_size(locale_handle);
   } else if (strncmp(locale_str, "es", 2) == 0) {
     locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_SPANISH);
+    locale_size = resource_size(locale_handle);
   } else if (strncmp(locale_str, "de", 2) == 0) {
     locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_GERMAN);
-  } else if (strncmp(locale_str, "en", 2) == 0) {
-    locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_ENGLISH);
+    locale_size = resource_size(locale_handle);
   }
 
-  int locale_size = resource_size(locale_handle);
+  // Fallback to English for unlocalized languages (0 byte files)
+  if (locale_size == 0) {
+    locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_ENGLISH);
+    locale_size = resource_size(locale_handle);
+  }
+
   int resource_offset = 0;
   int locale_entries = 0;
   resource_offset += resource_load_byte_range(locale_handle, resource_offset, 
