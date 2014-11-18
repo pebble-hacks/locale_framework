@@ -1,8 +1,8 @@
 {
   "uuid": "863faa63-4765-48e7-999e-fc6468c70c25",
-  "shortName": "localize",
-  "longName": "localize",
-  "companyName": "MakeAwesomeHappen",
+  "shortName": "locale_demo",
+  "longName": "locale_demo",
+  "companyName": "Pebble",
   "versionCode": 1,
   "versionLabel": "1.0",
   "watchapp": {
@@ -15,8 +15,12 @@
     "media": [
     {
       "type": "raw",
-      "name": "LOCALE",
-      "file": "locale.bin"
+      "name": "LOCALE_ENGLISH",
+      "file": "locale_english.bin"
+    }, {
+      "type": "raw",
+      "name": "LOCALE_CHINESE",
+      "file": "locale_chinese.bin"
     }
     ]
   }
