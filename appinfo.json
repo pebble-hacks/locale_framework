@@ -19,8 +19,8 @@
       "file": "locale_english.bin"
     }, {
       "type": "raw",
-      "name": "LOCALE_CHINESE",
-      "file": "locale_chinese.bin"
+      "name": "LOCALE_FRENCH",
+      "file": "locale_french.bin"
     }
     ]
   }

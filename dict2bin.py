@@ -22,7 +22,7 @@ def main():
     json_dict = json.load(open(dict_filename, 'rb'))
     hash_dict = {int(key) : value for (key, value) in json_dict.iteritems() if key.isdigit()}
     #create binary resource loadable as a pebble dictionary
-    with open(dict_filename + '.bin', 'w') as output_bin:
+    with open(dict_filename.replace('.json','.bin'), 'w') as output_bin:
       output_bin.write(struct.pack('I', len(hash_dict))) #count of entries
       for (key, value) in hash_dict.iteritems():
         output_bin.write(struct.pack('I',key)) #key

@@ -56,7 +56,7 @@ def main():
     json.dump(json_dict, open(output_filename, "wb"), indent=2, sort_keys=True)
     print("%s now has %d entries\n" % (output_filename, len(hash_dict)))
     #create binary resource loadable as a pebble dictionary
-    with open(output_filename + '.bin', 'wb') as output_bin:
+    with open(output_filename.replace('.json', '.bin'), 'wb') as output_bin:
       output_bin.write(struct.pack('I', len(hash_dict))) #count of entries
       for (key, value) in hash_dict.iteritems():
         output_bin.write(struct.pack('I',key)) #key
