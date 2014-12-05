@@ -17,8 +17,6 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_frame(window_layer);
   int num_items = 0;
   
-  printf(_("Meal application"));
-
   // This is an example of how you'd set a simple menu item
   menu_items[num_items++] = (SimpleMenuItem){
     // You should give each menu item a title and callback

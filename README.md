@@ -7,6 +7,8 @@ text to display.
 
 ## To Use
 
+### Setting Up Your Project
+
 * Add `localize.h`, `localize.c` and `hash.h` to your project's `src` directory.  
 
 * Add `locale_english.bin`, `locale_french.bin`, `locale_spanish.bin` and
@@ -15,31 +17,34 @@ text to display.
 > Note: Empty files (size 0) are used as placeholders so code can compile, and
 > will fall back to English.
 
-* Add `#include <localize.h>` to any code files using the framework.
+* Add `#include <localize.h>` to any code files that require translation.
 
 * Modify your main function to use `init_locale()`:
 
 ```c
 int main(void) {
+  // Init locale framework
   locale_init();
 
-  /* ... */
+  /* Other app setup code */
 
 }
 ```
 
-* All strings that you wish to localize, add `_()` around them.
+* For all strings that you wish to localize, add `_()` around them.
 
 ```c
-_("Press the select button");
+_("Breakfast Time");
 ```
+
+### Generating Translation Resources
 
 * Run `python gen_dict.py src/ locale_english.json`. This will generate
   `locale_english.json` and `locale_english.bin`.
 
 * Copy `locale_english.bin` to your project's `resources` directory.
 
-* Copy `locale_english.json` to other languages, such as `locale_german.json`.
+* Copy `locale_english.json` for other languages, such as `locale_german.json`.
 
 * Modify `locale_german.json` to replace the English strings with German
   strings.
@@ -49,7 +54,9 @@ _("Press the select button");
 
 * Copy `locale_german.bin` to your project's `resources` directory.
 
-* Add the following to your appinfo.json to declare the raw resource files:
+* Add the new `.bin` resource files to your project's `appinfo.json` file as 
+  shown in the 
+  [App Resources guide](https://developer.getpebble.com/guides/pebble-apps/display-and-animations/resources/#raw-resources). For example, for the four language files in this project are added as shown below:
 
 ```js
 "media": [
@@ -76,7 +83,14 @@ _("Press the select button");
 ]
 ```
 
-* Compile application and install!
+* Compile your application and install!
 
 > Note: `localize.c` is hard-coded to simplify testing (currently Spanish),
-> modify `localize.c` lines 7 & 8 to use automatically detected system locale.
+> replace line 8 with line 7 in `localize.c` to use automatically detected
+> system locale.
+
+### Adding More Languages
+
+If you wish to add more translations in the future, repeat *Generating
+Translation Resources* to obtain new translation binary resources. You will also
+need to do this in the event that you modify any of your strings.
