@@ -28,10 +28,10 @@ int main(void) {
 }
 ```
 
-* All strings that you wish to localize, add `LOC()` around them.
+* All strings that you wish to localize, add `_()` around them.
 
 ```c
-LOC("Press the select button");
+_("Press the select button");
 ```
 
 * Run `python gen_dict.py src/ locale_english.json`. This will generate
@@ -57,15 +57,18 @@ LOC("Press the select button");
     "type": "raw",
     "name": "LOCALE_ENGLISH",
     "file": "locale_english.bin"
-  }, {
+  }, 
+  {
     "type": "raw",
     "name": "LOCALE_FRENCH",
     "file": "locale_french.bin"
-  }, {
+  }, 
+  {
     "type": "raw",
     "name": "LOCALE_SPANISH",
     "file": "locale_spanish.bin"
-  }, {
+  }, 
+  {
     "type": "raw",
     "name": "LOCALE_GERMAN",
     "file": "locale_german.bin"
