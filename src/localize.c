@@ -4,7 +4,7 @@ DictionaryIterator s_locale_dict;
 
 
 void locale_init(void) {
-  //const char* locale_str = i18n_get_locale();
+  //const char* locale_str = i18n_get_system_locale();
   const char* locale_str = "es"; //hard-coded for testing 
   ResHandle locale_handle = NULL;
   int locale_size = 0;
