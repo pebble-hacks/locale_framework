@@ -42,9 +42,10 @@ _("Breakfast Time");
 * Run `python gen_dict.py src/ locale_english.json`. This will generate
   `locale_english.json` and `locale_english.bin`.
 
-* Copy `locale_english.bin` to your project's `resources` directory.
+* Move `locale_english.bin` to your project's `resources` directory.
 
-* Copy `locale_english.json` for other languages, such as `locale_german.json`.
+* Make a copy of `locale_english.json` for other languages, such as
+  `locale_german.json`.
 
 * Modify `locale_german.json` to replace the English strings with German
   strings.
@@ -52,11 +53,13 @@ _("Breakfast Time");
 * Run `python dict2bin.py locale_german.json`. This will generate
   `locale_german.bin`.
 
-* Copy `locale_german.bin` to your project's `resources` directory.
+* Move `locale_german.bin` to your project's `resources` directory.
 
 * Add the new `.bin` resource files to your project's `appinfo.json` file as 
   shown in the 
-  [App Resources guide](https://developer.getpebble.com/guides/pebble-apps/display-and-animations/resources/#raw-resources). For example, for the four language files in this project are added as shown below:
+  [App Resources guide](https://developer.getpebble.com/guides/pebble-apps/display-and-animations/resources/#raw-resources). 
+  For example, for the four language files in this project are added as shown
+  below:
 
 ```js
 "media": [
@@ -85,9 +88,8 @@ _("Breakfast Time");
 
 * Compile your application and install!
 
-> Note: `localize.c` is hard-coded to simplify testing (currently Spanish),
-> replace line 8 with line 7 in `localize.c` to use automatically detected
-> system locale.
+You can easily test your translations by commenting line 11 and uncommenting
+line 8 of `localize.c`, replacing "es" with a locale you are translating.
 
 ### Adding More Languages
 
