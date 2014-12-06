@@ -23,7 +23,7 @@ def hash_djb2(string):
 def gen_loc_dict(code_dir):
     fileglob_list = []
     loc_dict = {}
-    pbllog_regex = "LOC\(\"(?P<loc>[^\)]+)\"\)"
+    pbllog_regex = "_\(\"(?P<loc>[^\)]+)\"\)"
 
     for root, dirnames, filenames in os.walk(code_dir):
         for filename in [filename for filename in filenames \

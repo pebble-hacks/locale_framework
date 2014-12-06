@@ -17,24 +17,22 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_frame(window_layer);
   int num_items = 0;
   
-  printf(LOC("Meal application"));
-
   // This is an example of how you'd set a simple menu item
   menu_items[num_items++] = (SimpleMenuItem){
     // You should give each menu item a title and callback
-    .title = LOC("Breakfast Time"),
-    .subtitle = LOC("Start your day right"),
+    .title = _("Breakfast Time"),
+    .subtitle = _("Start your day right"),
     .callback = menu_select_callback,
   };
   // The menu items appear in the order saved in the menu items array
   menu_items[num_items++] = (SimpleMenuItem){
-    .title = LOC("Lunch Time"),
-    .subtitle = LOC("Healthy in a hurry"),
+    .title = _("Lunch Time"),
+    .subtitle = _("Healthy in a hurry"),
     .callback = menu_select_callback,
   };
   menu_items[num_items++] = (SimpleMenuItem){
-    .title = LOC("Dinner Time"),
-    .subtitle = LOC("A fine meal with family"),
+    .title = _("Dinner Time"),
+    .subtitle = _("A fine meal with family"),
     .callback = menu_select_callback
   };
 
