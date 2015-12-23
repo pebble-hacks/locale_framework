@@ -19,7 +19,7 @@ text to display.
 
 * Add `#include <localize.h>` to any code files that require translation.
 
-* Modify your main function to use `init_locale()`:
+* Modify your main function to use `locale_init()`:
 
 ```c
 int main(void) {
