@@ -54,7 +54,8 @@ void window_unload(Window *window) {
 }
 
 int main(void) {
-  locale_init();
+  locale_init(NULL);
+  //locale_init("de");
 
   window = window_create();
 
