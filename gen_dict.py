@@ -88,7 +88,17 @@ def main():
     code_dir = sys.argv[1]
     output_filename = sys.argv[2]
 
+    str_dict = gen_str_dict(code_dir, True)
+
     hash_dict = gen_loc_dict(code_dir)
+
+    print("******************** Unlocalized strings (ignoring applog, comments, defines, includes) ********************")
+    for key, item in str_dict.iteritems():
+        print(key)
+        for string in item:
+            if not string in hash_dict.values():
+                print('    ' + string)
+
     json_dict = {str(key): value for (key, value) in hash_dict.iteritems()}
     json.dump(json_dict, open(output_filename, "wb"), indent=2, sort_keys=True)
     print("%s now has %d entries\n" % (output_filename, len(hash_dict)))
