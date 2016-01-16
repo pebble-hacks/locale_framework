@@ -73,6 +73,7 @@ void locale_init(const char* locale_str) {
     free(buffer);
   }
 
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Ending locale init; free is %i", heap_bytes_free());
   dict_write_end(&s_locale_dict);
 }
 
