@@ -1,9 +1,10 @@
 #!/usr/bin/python
-import os, sys, string, pdb
-import re, fileinput
 import ctypes
-import struct
 import json
+import os
+import re
+import struct
+import sys
 
 
 #Helper functions
