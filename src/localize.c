@@ -2,13 +2,23 @@
   
 DictionaryIterator s_locale_dict;
 
+static char *dict_buffer = NULL;
 
-void locale_init(void) {
+void locale_deinit() {
+  if (dict_buffer != NULL) {
+    free(dict_buffer);
+  }
+}
+
+void locale_init(const char* locale_str) {
   //hard-coded for testing 
-  // const char* locale_str = "es";
+  //locale_str = "en";
 
   // Detect system locale
-  const char* locale_str = i18n_get_system_locale();
+  if (locale_str == NULL) {
+    locale_str = i18n_get_system_locale();
+  }
+
   ResHandle locale_handle = NULL;
   int locale_size = 0;
 
@@ -40,7 +50,13 @@ void locale_init(void) {
   } locale_info;
 
   int dict_buffer_size = locale_size + 7 * locale_entries; //7 byte header per item
-  char *dict_buffer = malloc(dict_buffer_size);
+
+  if (dict_buffer != NULL) {
+    free(dict_buffer);
+  }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Starting locale init; free is %i", heap_bytes_free());
+  dict_buffer = malloc(dict_buffer_size);
+
   dict_write_begin(&s_locale_dict, (uint8_t*)dict_buffer, dict_buffer_size);
 
   for (int i = 0; i < locale_entries; i++) {
@@ -57,6 +73,7 @@ void locale_init(void) {
     free(buffer);
   }
 
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Ending locale init; free is %i", heap_bytes_free());
   dict_write_end(&s_locale_dict);
 }
 
