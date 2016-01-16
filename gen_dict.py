@@ -8,6 +8,39 @@ import sys
 
 
 #Helper functions
+def gen_str_dict(code_dir, ignore_some=False):
+    fileglob_list = []
+    str_dict = {}
+    if ignore_some:
+        applog_locs = []
+        pblapplog_regex = "(APP_LOG|#define|#import|#include|\/\/).*\"(?P<loc>[^\)\n]+)\""
+        pbllog_regex = ".*\"(?P<loc>[^\)\n]+)\""
+    else:
+        pbllog_regex = "\"(?P<loc>[^\)\n]+)\""
+
+    for root, dirnames, filenames in os.walk(code_dir):
+        for filename in [filename for filename in filenames if ".c" in filename[-2:]]:
+            fileglob_list.append(os.path.join(root, filename))
+    for filename in fileglob_list:
+        str_dict[filename] = []
+        with open(filename, 'rb') as afile:
+            text = afile.read()
+            applog_match_list = re.finditer(pblapplog_regex, text)
+            if ignore_some:
+                if applog_match_list:
+                    for match in applog_match_list:
+                        applog_locs += [match.group('loc')]
+            match_list = re.finditer(pbllog_regex, text)
+            if match_list:
+                for match in match_list:
+                    if ignore_some:
+                        if match.group('loc') in applog_locs:
+                            pass
+                        else:
+                            str_dict[filename] += [match.group('loc')]
+                    else:
+                        str_dict[filename] += [match.group('loc')]
+    return str_dict
 
 
 def hash_djb2(string):
