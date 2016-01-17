@@ -1,48 +1,14 @@
 #!/usr/bin/python
-import ctypes
-import json
+import argparse
 import os
-import re
-import struct
 import sys
+import re
+import ctypes
+import struct
+import json
 
 
 #Helper functions
-def gen_str_dict(code_dir, ignore_some=False):
-    fileglob_list = []
-    str_dict = {}
-    if ignore_some:
-        applog_locs = []
-        pblapplog_regex = "(APP_LOG|#define|#import|#include|\/\/).*\"(?P<loc>[^\)\n]+)\""
-        pbllog_regex = ".*\"(?P<loc>[^\)\n]+)\""
-    else:
-        pbllog_regex = "\"(?P<loc>[^\)\n]+)\""
-
-    for root, dirnames, filenames in os.walk(code_dir):
-        for filename in [filename for filename in filenames if ".c" in filename[-2:]]:
-            fileglob_list.append(os.path.join(root, filename))
-    for filename in fileglob_list:
-        str_dict[filename] = []
-        with open(filename, 'rb') as afile:
-            text = afile.read()
-            applog_match_list = re.finditer(pblapplog_regex, text)
-            if ignore_some:
-                if applog_match_list:
-                    for match in applog_match_list:
-                        applog_locs += [match.group('loc')]
-            match_list = re.finditer(pbllog_regex, text)
-            if match_list:
-                for match in match_list:
-                    if ignore_some:
-                        if match.group('loc') in applog_locs:
-                            pass
-                        else:
-                            str_dict[filename] += [match.group('loc')]
-                    else:
-                        str_dict[filename] += [match.group('loc')]
-    return str_dict
-
-
 def hash_djb2(string):
     """hash a string using djb2 with seed 5381
     Args:
@@ -54,6 +20,57 @@ def hash_djb2(string):
     for char in string:
         hashval.value = ((hashval.value << 5) + hashval.value) + ord(char)
     return hashval.value & 0x7FFFFFFF
+
+
+def gen_str_dict(code_dir, ignore_some=False, ignore_localized=False):
+    fileglob_list = []
+    str_dict = {}
+
+    pbllog_regex = "\"(?P<loc>[^\)\n]+)\""
+
+    if ignore_some:
+        pblapplog_regex = "(APP_LOG|#define|#import|#include|\/\/|snprintf).*\"(?P<loc>[^\)\n]+)\""
+        pbllog_regex = ".*\"(?P<loc>[^\)\n]+)\""
+    if ignore_localized:
+        pbllocalized_regex = "_\(\"(?P<loc>[^\)\n]+)\"\)"
+
+    for root, dirnames, filenames in os.walk(code_dir):
+        for filename in [filename for filename in filenames if ".c" in filename[-2:]]:
+            fileglob_list.append(os.path.join(root, filename))
+    for filename in fileglob_list:
+        if ignore_some:
+            applog_locs = []
+        if ignore_localized:
+            localized_locs = []
+        str_dict[filename] = []
+        with open(filename, 'rb') as afile:
+            text = afile.read()
+            if ignore_some:
+                applog_match_list = re.finditer(pblapplog_regex, text)
+                if applog_match_list:
+                    for match in applog_match_list:
+                        applog_locs += [match.group('loc')]
+
+            if ignore_localized:
+                localized_match_list = re.finditer(pbllocalized_regex, text)
+                if localized_match_list:
+                    for match in localized_match_list:
+                        localized_locs += [match.group('loc')]
+
+            match_list = re.finditer(pbllog_regex, text)
+            if match_list:
+                for match in match_list:
+                    text = match.group('loc')
+                    push = True
+                    if ignore_some and text in applog_locs:
+                        applog_locs.pop(applog_locs.index(text))
+                        push = False
+                    if ignore_some and text in localized_locs:
+                        localized_locs.pop(localized_locs.index(text))
+                        push = False
+                    if push:
+                        str_dict[filename] += [text]
+    return str_dict
 
 
 def gen_loc_dict(code_dir):
@@ -77,31 +94,46 @@ def gen_loc_dict(code_dir):
 
 
 def main():
-    # arguments, print an example of correct usage.
-    if len(sys.argv) - 1 != 2:
-        print("********************")
-        print("Usage suggestion:")
-        print("python " + sys.argv[0] + " <code_dir> <loc_english.json>")
-        print("********************")
-        exit()
+    parser = argparse.ArgumentParser(description='Generate locale dicts.')
+    parser.add_argument('source', metavar='SRC',
+                        help='source folder (try ./src)')
+    parser.add_argument('output', metavar='OUTPUT',
+                        help='output JSON file (eg loc_english.json)')
+    parser.add_argument('-p', '--purge', help='Overwrite the output dictionary', action='store_true')
 
-    code_dir = sys.argv[1]
-    output_filename = sys.argv[2]
+    args = parser.parse_args()
 
-    str_dict = gen_str_dict(code_dir, True)
+    code_dir = args.source
+    output_filename = args.output
+
+    str_dict = gen_str_dict(code_dir, True, True)
 
     hash_dict = gen_loc_dict(code_dir)
 
-    print("******************** Unlocalized strings (ignoring applog, comments, defines, includes) ********************")
+    print("== Unlocalized strings (ignoring applog, comments, defines, includes, snprintf) ==")
     for key, item in str_dict.iteritems():
-        print(key)
-        for string in item:
-            if not string in hash_dict.values():
+        values = [string for string in item]
+        if len(values) > 0:
+            print(key)
+            for string in values:
                 print('    ' + string)
+    print("==================================================================================")
 
-    json_dict = {str(key): value for (key, value) in hash_dict.iteritems()}
-    json.dump(json_dict, open(output_filename, "wb"), indent=2, sort_keys=True)
+    if not args.purge:
+        data = {}
+        if os.path.isfile(output_filename):
+            data = json.load(open(output_filename, "r"))
+
+        for key, value in hash_dict.iteritems():
+            if str(key) in data.keys():
+                hash_dict[key] = data[str(key)]
+
+        json.dump(hash_dict, open(output_filename, "wb"), indent=2, sort_keys=True)
+    else:
+        json.dump(hash_dict, open(output_filename, "wb"), indent=2, sort_keys=True)
+
     print("%s now has %d entries\n" % (output_filename, len(hash_dict)))
+
     #create binary resource loadable as a pebble dictionary
     with open(output_filename.replace('.json', '.bin'), 'wb') as output_bin:
         output_bin.write(struct.pack('I', len(hash_dict)))  # count of entries
