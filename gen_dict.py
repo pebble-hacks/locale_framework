@@ -122,15 +122,15 @@ def main():
     if not args.purge:
         data = {}
         if os.path.isfile(output_filename):
-            data = json.load(open(output_filename, "r"))
+            data = json.load(open(output_filename, "r"), encoding="utf-8")
 
         for key, value in hash_dict.iteritems():
             if str(key) in data.keys():
-                hash_dict[key] = data[str(key)]
+                hash_dict[key] = data[str(key)].encode('utf-8')
 
-        json.dump(hash_dict, open(output_filename, "wb"), indent=2, sort_keys=True)
+        json.dump(hash_dict, open(output_filename, "wb"), indent=2, encoding="utf-8", sort_keys=True, ensure_ascii=False)
     else:
-        json.dump(hash_dict, open(output_filename, "wb"), indent=2, sort_keys=True)
+        json.dump(hash_dict, open(output_filename, "wb"), indent=2, encoding="utf-8", sort_keys=True, ensure_ascii=False)
 
     print("%s now has %d entries\n" % (output_filename, len(hash_dict)))
 
