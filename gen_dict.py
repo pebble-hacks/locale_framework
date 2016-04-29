@@ -35,7 +35,8 @@ def gen_loc_dict(code_dir):
             match_list = re.finditer(pbllog_regex, text)
             if match_list:
                 for match in match_list:
-                  loc_dict[hash_djb2(match.group('loc'))] = match.group('loc')
+                  text = match.group('loc').decode('string_escape')
+                  loc_dict[hash_djb2(text)] = text
 
     return loc_dict
 

@@ -39,7 +39,10 @@ void locale_init(void) {
     int32_t strlen;
   } locale_info;
 
-  int dict_buffer_size = locale_size + 7 * locale_entries; //7 byte header per item
+  int dict_buffer_size = locale_size;
+  dict_buffer_size -= sizeof(locale_entries); // remove size of the first bytes containing the number of entries
+  dict_buffer_size -= sizeof(locale_info) * locale_entries; // remove the size of the local_info for each entry
+  dict_buffer_size += 7 * locale_entries; //7 byte header per item
   char *dict_buffer = malloc(dict_buffer_size);
   dict_write_begin(&s_locale_dict, (uint8_t*)dict_buffer, dict_buffer_size);
 
